@@ -6,169 +6,190 @@
 <title>L-Shift Mirror Cipher</title>
 
 <style>
-    body {
-        font-family: Arial, sans-serif;
-        background: linear-gradient(to right, #1e3c72, #2a5298);
-        color: white;
-        text-align: center;
-        padding: 40px;
-        margin: 0;
-    }
+*{
+    box-sizing:border-box;
+}
 
-    .container {
-        background: rgba(0,0,0,0.4);
-        padding: 30px;
-        border-radius: 12px;
-        max-width: 600px;
-        margin: auto;
-        box-shadow: 0 0 15px rgba(0,0,0,0.6);
-    }
+body{
+    margin:0;
+    font-family: 'Segoe UI', sans-serif;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    min-height:100vh;
+}
 
-    textarea, input {
-        width: 90%;
-        padding: 10px;
-        margin: 10px 0;
-        border-radius: 6px;
-        border: none;
-        font-size: 16px;
-    }
+.container{
+    display:flex;
+    gap:30px;
+    flex-wrap:wrap;
+}
 
-    button {
-        padding: 10px 20px;
-        margin: 10px;
-        border: none;
-        border-radius: 6px;
-        cursor: pointer;
-        font-size: 16px;
-        font-weight: bold;
-    }
+.card{
+    background: rgba(255,255,255,0.1);
+    backdrop-filter: blur(15px);
+    padding:30px;
+    border-radius:20px;
+    width:360px;
+    color:white;
+    box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+}
 
-    .encrypt-btn {
-        background-color: #00c853;
-        color: white;
-    }
+h2{
+    text-align:center;
+    margin-bottom:20px;
+}
 
-    .decrypt-btn {
-        background-color: #d50000;
-        color: white;
-    }
+textarea, input{
+    width:100%;
+    padding:12px;
+    margin-bottom:15px;
+    border-radius:10px;
+    border:none;
+    outline:none;
+    font-size:14px;
+}
 
-    .clear-btn {
-        background-color: #ffab00;
-        color: black;
-    }
+textarea{
+    resize:none;
+}
 
-    button:hover {
-        opacity: 0.85;
-    }
+input{
+    background:rgba(255,255,255,0.9);
+}
 
-    .output {
-        margin-top: 20px;
-        font-size: 18px;
-        font-weight: bold;
-        word-wrap: break-word;
-        min-height: 24px;
-    }
+textarea{
+    background:rgba(255,255,255,0.9);
+}
+
+button{
+    width:100%;
+    padding:12px;
+    border:none;
+    border-radius:10px;
+    font-weight:bold;
+    font-size:14px;
+    cursor:pointer;
+    transition:0.3s ease;
+}
+
+.encrypt-btn{
+    background:#4ade80;
+    color:#0f172a;
+}
+
+.decrypt-btn{
+    background:#f87171;
+    color:white;
+}
+
+button:hover{
+    transform:translateY(-2px);
+    box-shadow:0 8px 20px rgba(0,0,0,0.2);
+}
+
+.result{
+    margin-top:15px;
+    padding:12px;
+    border-radius:10px;
+    background:rgba(255,255,255,0.15);
+    min-height:40px;
+    font-size:14px;
+}
 </style>
 </head>
+
 <body>
 
 <div class="container">
-    <h1>L-Shift Mirror Cipher</h1>
 
-    <textarea id="message" rows="4" placeholder="Enter your message"></textarea><br>
-    <input type="text" id="key" placeholder="Enter numeric key (e.g. 314)"><br>
+    <!-- Encryption -->
+    <div class="card">
+        <h2>Encryption</h2>
+        <textarea id="encryptInput" rows="3" placeholder="Enter message..."></textarea>
+        <input type="text" id="encryptKey" placeholder="Enter numeric key (e.g. 314)">
+        <button class="encrypt-btn" onclick="encrypt()">Encrypt</button>
+        <div class="result" id="encryptResult">Waiting...</div>
+    </div>
 
-    <button class="encrypt-btn" onclick="encrypt()">Encrypt</button>
-    <button class="decrypt-btn" onclick="decrypt()">Decrypt</button>
-    <button class="clear-btn" onclick="clearAll()">Clear</button>
+    <!-- Decryption -->
+    <div class="card">
+        <h2>Decryption</h2>
+        <textarea id="decryptInput" rows="3" placeholder="Paste encrypted message..."></textarea>
+        <button class="decrypt-btn" onclick="decrypt()">Decrypt</button>
+        <div class="result" id="decryptResult">Waiting...</div>
+    </div>
 
-    <div class="output" id="result"></div>
 </div>
 
 <script>
-
 const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+let savedKey = "";
 
-function mirrorChar(char) {
+function mirrorChar(char){
     const index = alphabet.indexOf(char);
-    if (index === -1) return char;
+    if(index === -1) return char;
     return alphabet[25 - index];
 }
 
-function processText(text, key, mode) {
+function processText(text, key, mode){
     let result = "";
     text = text.toUpperCase();
     let keyIndex = 0;
 
-    for (let i = 0; i < text.length; i++) {
+    for(let i = 0; i < text.length; i++){
         let char = text[i];
 
-        if (alphabet.includes(char)) {
+        if(alphabet.includes(char)){
             let letterIndex = alphabet.indexOf(char);
             let shift = parseInt(key[keyIndex % key.length]);
 
-            if (mode === "encrypt") {
-                // Step 1: Shift forward
-                let shiftedIndex = (letterIndex + shift) % 26;
-                let shiftedChar = alphabet[shiftedIndex];
-
-                // Step 2: Mirror
-                result += mirrorChar(shiftedChar);
-
-            } else {
-                // Step 1: Mirror first
+            if(mode === "encrypt"){
+                let shifted = (letterIndex + shift) % 26;
+                result += mirrorChar(alphabet[shifted]);
+            }else{
                 let mirrored = mirrorChar(char);
                 let mirroredIndex = alphabet.indexOf(mirrored);
-
-                // Step 2: Shift backward
-                let originalIndex = (mirroredIndex - shift + 26) % 26;
-                result += alphabet[originalIndex];
+                let original = (mirroredIndex - shift + 26) % 26;
+                result += alphabet[original];
             }
 
             keyIndex++;
-        } else {
-            result += char; // keep spaces & symbols
+        }else{
+            result += char;
         }
     }
 
     return result;
 }
 
-function encrypt() {
-    const message = document.getElementById("message").value;
-    const key = document.getElementById("key").value;
+function encrypt(){
+    const message = document.getElementById("encryptInput").value;
+    const key = document.getElementById("encryptKey").value;
 
-    if (!key.match(/^\d+$/)) {
-        alert("Key must contain numbers only.");
+    if(!key.match(/^\d+$/)){
+        alert("Key must be numbers only.");
         return;
     }
 
-    const encrypted = processText(message, key, "encrypt");
-    document.getElementById("result").innerText = encrypted;
-    document.getElementById("message").value = encrypted;
+    savedKey = key;
+
+    document.getElementById("encryptResult").innerText =
+        processText(message, key, "encrypt");
 }
 
-function decrypt() {
-    const message = document.getElementById("message").value;
-    const key = document.getElementById("key").value;
+function decrypt(){
+    const message = document.getElementById("decryptInput").value;
 
-    if (!key.match(/^\d+$/)) {
-        alert("Key must contain numbers only.");
+    if(savedKey === ""){
+        alert("Encrypt first to store the key.");
         return;
     }
 
-    const decrypted = processText(message, key, "decrypt");
-    document.getElementById("result").innerText = decrypted;
-    document.getElementById("message").value = decrypted;
+    document.getElementById("decryptResult").innerText =
+        processText(message, savedKey, "decrypt");
 }
-
-function clearAll() {
-    document.getElementById("message").value = "";
-    document.getElementById("result").innerText = "";
-    document.getElementById("key").value = "";
-}
-
 </script>
 
 </body>
