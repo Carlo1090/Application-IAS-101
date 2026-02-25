@@ -18,12 +18,21 @@ body{
     justify-content:center;
     align-items:center;
     min-height:100vh;
+    padding:40px 0;
 }
 
 .container{
     display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:30px;
+}
+
+.row{
+    display:flex;
     gap:30px;
     flex-wrap:wrap;
+    justify-content:center;
 }
 
 .card{
@@ -34,6 +43,11 @@ body{
     width:360px;
     color:white;
     box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+}
+
+.instructions{
+    width:760px;
+    max-width:95%;
 }
 
 h2{
@@ -53,13 +67,10 @@ textarea, input{
 
 textarea{
     resize:none;
-}
-
-input{
     background:rgba(255,255,255,0.9);
 }
 
-textarea{
+input{
     background:rgba(255,255,255,0.9);
 }
 
@@ -104,23 +115,37 @@ button:hover{
 
 <div class="container">
 
-    <!-- Encryption -->
-    <div class="card">
-        <h2>Encryption</h2>
-        <textarea id="encryptInput" rows="3" placeholder="Enter message..."></textarea>
-        <input type="text" id="encryptKey" placeholder="Enter numeric key (e.g. 314)">
-        <button class="encrypt-btn" onclick="encrypt()">Encrypt</button>
-        <div class="result" id="encryptResult">Waiting...</div>
+    <!-- INSTRUCTIONS -->
+    <div class="card instructions">
+        <h2>L-Method Instructions</h2>
+        <p><strong>Step 1:</strong> Enter your message.</p>
+        <p><strong>Step 2:</strong> Enter a numeric key (example: 314).</p>
+        <p><strong>Step 3:</strong> Each letter is shifted using the digits of the key repeatedly.</p>
+        <p><strong>Step 4:</strong> After shifting, each letter is mirrored in the alphabet (A↔Z, B↔Y, C↔X...).</p>
+        <p><strong>To Decrypt:</strong> The system mirrors the letters first, then reverses the shift using the same key.</p>
+        <p><strong>Example:</strong> HELLO + key 314 → (Shift) → (Mirror) → Encrypted text.</p>
     </div>
 
-    <!-- Decryption -->
-    <div class="card">
-        <h2>Decryption</h2>
-        <textarea id="decryptInput" rows="3" placeholder="Paste encrypted message..."></textarea>
-        <button class="decrypt-btn" onclick="decrypt()">Decrypt</button>
-        <div class="result" id="decryptResult">Waiting...</div>
-    </div>
+    <div class="row">
 
+        <!-- Encryption -->
+        <div class="card">
+            <h2>Encryption</h2>
+            <textarea id="encryptInput" rows="3" placeholder="Enter message..."></textarea>
+            <input type="text" id="encryptKey" placeholder="Enter numeric key (e.g. 314)">
+            <button class="encrypt-btn" onclick="encrypt()">Encrypt</button>
+            <div class="result" id="encryptResult">Waiting...</div>
+        </div>
+
+        <!-- Decryption -->
+        <div class="card">
+            <h2>Decryption</h2>
+            <textarea id="decryptInput" rows="3" placeholder="Paste encrypted message..."></textarea>
+            <button class="decrypt-btn" onclick="decrypt()">Decrypt</button>
+            <div class="result" id="decryptResult">Waiting...</div>
+        </div>
+
+    </div>
 </div>
 
 <script>
